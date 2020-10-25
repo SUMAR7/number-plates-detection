@@ -72,22 +72,32 @@ def ratio_and_rotation(rect):
 
 
 top = tk.Tk()
+top.attributes('-zoomed', True)
 top.geometry('900x900')
 top.title('Number Plate Recognition')
+
+title = Label(top, text='NIAIS', font=('Arial Bold', 15), background='#E2E2E2')
+title.place(x=10, y=10)
+
+name = Label(top, text='Sajjad Umar', font=('Arial Bold', 15), background='#E2E2E2')
+name.place(x=10, y=40)
+
+roll = Label(top, text='NIAIS-0983', font=('Arial Bold', 15), background='#E2E2E2')
+roll.place(x=10, y=70)
 
 top.iconphoto(True, PhotoImage(file="/home/sajjad/PycharmProjects/number-plates-detection/assets/logo.png"))
 img = ImageTk.PhotoImage(Image.open("/home/sajjad/PycharmProjects/number-plates-detection/assets/logo.png"))
 top.configure(background='#E2E2E2')
 label = Label(top, background='#E2E2E2', font=('arial', 20, 'bold'))
-owner_name = Label(top)
-model = Label(top)
-type = Label(top)
-registration = Label(top)
+owner_name = Label(top, font=('arial', 20, 'bold'))
+model = Label(top, font=('arial', 20, 'bold'))
+type = Label(top, font=('arial', 20, 'bold'))
+registration = Label(top, font=('arial', 20, 'bold'))
 
-owner_name.pack(side=tk.BOTTOM,pady=5)
-model.pack(side=tk.BOTTOM,pady=5)
-registration.pack(side=tk.BOTTOM,pady=5)
-type.pack(side=tk.BOTTOM,pady=5)
+owner_name.pack(side=tk.BOTTOM,pady=15)
+model.pack(side=tk.BOTTOM,pady=15)
+registration.pack(side=tk.BOTTOM,pady=15)
+type.pack(side=tk.BOTTOM,pady=15)
 
 
 sign_image = Label(top, bd=10)
@@ -95,7 +105,7 @@ plate_image = Label(top, bd=10)
 owners = pd.read_csv('/home/sajjad/PycharmProjects/number-plates-detection/assets/datasets/owners.csv', sep=",")
 
 
-def classify(file_path):
+def classify(file_path, button):
     res_text = [0]
     res_img = [0]
     img = cv2.imread(file_path)
@@ -149,23 +159,23 @@ def classify(file_path):
                         break
 
     label.configure(foreground='#011638', text=res_text[0].strip())
+    label.place(x=1300, y=450)
     uploaded = Image.open("/home/sajjad/PycharmProjects/number-plates-detection/assets/result.png")
     im = ImageTk.PhotoImage(uploaded)
     plate_image.configure(image=im)
     plate_image.image = im
-    plate_image.pack()
-    plate_image.place(x=560, y=320)
+    plate_image.pack(side=tk.RIGHT, padx=350)
 
 
 def show_classify_button(file_path):
-    classify_b = Button(top, text="Classify Image", command=lambda: classify(file_path), padx=10, pady=5)
+    classify_b = Button(top, text="Classify Image", command=lambda: classify(file_path, classify_b), padx=10, pady=5)
     classify_b.configure(background='#364156', foreground='white', font=('arial', 15, 'bold'))
-    classify_b.place(x=490, y=550)
+    classify_b.place(x=250, y=700)
 
 
 def upload_image():
     try:
-        file_path = filedialog.askopenfilename()
+        file_path = filedialog.askopenfilename(initialdir='/home/sajjad/PycharmProjects/number-plates-detection/assets/test_samples')
         uploaded = Image.open(file_path)
         uploaded.thumbnail(((top.winfo_width() / 2.25), (top.winfo_height() / 2.25)))
         im = ImageTk.PhotoImage(uploaded)
@@ -179,8 +189,7 @@ def upload_image():
 
 upload = Button(top, text="Upload an image", command=upload_image, padx=10, pady=5)
 upload.configure(background='#364156', foreground='white', font=('arial', 15, 'bold'))
-upload.pack()
-upload.place(x=210, y=550)
+upload.pack(side=tk.BOTTOM, pady=10)
 sign_image.pack()
 sign_image.place(x=70, y=200)
 
@@ -188,5 +197,12 @@ label.pack()
 label.place(x=500, y=220)
 heading = Label(top, image=img)
 heading.configure(background='#E2E2E2', foreground='#364156')
-heading.pack()
+heading.pack(side=TOP, pady=10)
+
+starting_image = Image.open("/home/sajjad/PycharmProjects/number-plates-detection/assets/niais.png")
+im = ImageTk.PhotoImage(starting_image)
+sign_image.configure(image=im)
+sign_image.image = im
+label.configure(text='')
+
 top.mainloop()
